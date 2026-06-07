@@ -2,6 +2,7 @@
 @theme {
   
   --color-primary: #5f6fff; 
+  --grid-template-columns-auto-cards: repeat(auto-fill, minmax(200px, 1fr));
 }
 .active hr{
     @apply block

@@ -27,6 +27,7 @@ function App() {
   <Route path="/contact" element={<Contact/>}/>
   <Route path="/my-profile" element={<MyProfile/>}/>
   <Route path="/my-appointment" element={<MyAppointment/>}/>
+  <Route path="/appointment/:id" element={<MyAppointment/>}/>
   
   <Route path="*" element={<h2>This is an error page</h2>}/>
  </Routes>
