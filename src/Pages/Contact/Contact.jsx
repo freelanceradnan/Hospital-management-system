@@ -13,7 +13,7 @@ const Contact = () => {
       <div className="my-10 flex flex-col justify-center md:flex-row gap-10 mb-28 text-sm">
         <img src={assets.contact_image} alt="" className="w-full max-w-[350px]"/>
         <div className="flex flex-col justify-center items-start gap-6">
-            <p className="font-semibold text-lg text-gray-600">Our OFFICE</p>
+            <p className="font-semibold text-lg text-gray-600 uppercase">Our OFFICE</p>
             <p className="text-gray-500">
                 54709 Willms Station <br />
                 Suite 350, Washington, USA

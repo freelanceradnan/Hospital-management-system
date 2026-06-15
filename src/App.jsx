@@ -7,7 +7,7 @@ import Login from "./Pages/Login/Login";
 import MyProfile from "./Pages/MyProfile/MyProfile";
 import MyAppointment from "./Pages/MyAppointment/MyAppointment";
 import Navbar from "./Components/Navbar/Navbar";
-
+import Footer from './Components/Footer/Footer'
 
 function App() {
 
@@ -31,6 +31,8 @@ function App() {
   
   <Route path="*" element={<h2>This is an error page</h2>}/>
  </Routes>
+ {/* footer */}
+ <Footer/>
  </div>
   </>
   )

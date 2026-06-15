@@ -21,7 +21,7 @@ const About = () => {
             <p>Why <span className='text-gray-700 font-semibold'>Choose us</span></p>
         </div>
         <div className='flex flex-col md:flex-row mb-20'>
-            <div className='border px-19 md:px-20 py-8 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-primary hover:text-white transition-all duration-300 text-gray-600 cursor-pointer border-gray-300'>
+            <div className='border px-19 md:px-20 py-1 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-primary hover:text-white transition-all duration-300 text-gray-600 cursor-pointer border-gray-300'>
             <b>Efficiency:</b>
             <p>Streamlined appointment scheduling that fits into your busy lifestyle.</p>
             </div>
