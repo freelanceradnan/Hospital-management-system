@@ -113,6 +113,12 @@ const AuthForm = () => {
             {state === "signup" ? "Login here" : "Sign up here"}
           </span>
         </p>
+        {state!=="signup"&&(
+          <>
+          <p>Doctors Login</p>
+        <p>Admin Login</p>
+          </>
+        )}
       </form>
     </div>
   );
