@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-
+import { auth } from '../../Firebase/Firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 const AuthForm = () => {
 //change from with states
   const [state, setState] = useState('signup');
-  
+  const [loading,setLoading]=useState(false)
   // Form input states
   const [formData, setFormData] = useState({
     fullName: '',
@@ -18,9 +19,18 @@ const AuthForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
+  
     e.preventDefault();
-    
+    setLoading(true)
+    try {
+    const result=await createUserWithEmailAndPassword(auth,formData.email,formData.password)
+  alert('your account is done')
+  setLoading(false)
+    } catch (error) {
+      return alert('gateout')
+      setLoading(false)
+    }
    
   };
 
@@ -100,7 +110,7 @@ const AuthForm = () => {
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded mt-2 transition duration-200"
         >
-          {state === "signup" ? "Create Account" : "Login"}
+         {loading ? "loading...." : state === "signup" ? "Create Account" : "Login"}
         </button>
 
         {/* State Toggle Link */}
