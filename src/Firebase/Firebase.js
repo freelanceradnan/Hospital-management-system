@@ -3,12 +3,12 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
-  apiKey: "AIzaSyC9Rlfmy9h5FoqubeywCM0egPzQh9XLzf4",
-  authDomain: "perscripto-hostpital.firebaseapp.com",
-  projectId: "perscripto-hostpital",
-  storageBucket: "perscripto-hostpital.firebasestorage.app",
-  messagingSenderId: "511080851908",
-  appId: "1:511080851908:web:2a273577274fdf8d78dc91"
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTHDOMAIN,
+  projectId: import.meta.env.VITE_PROJECTID,
+  storageBucket: import.meta.env.VITE_STORAGEBUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGINGSENDERID,
+  appId: import.meta.env.VITE_APPID
 };
 
 // Initialize Firebase
