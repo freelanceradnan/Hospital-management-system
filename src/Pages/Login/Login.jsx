@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { auth, db } from "../../Firebase/Firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithPopup, signInWithRedirect } from "firebase/auth";
 import { toast } from "react-toastify";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { signInWithEmailAndPassword } from "firebase/auth/cordova";
 import { Eye, EyeClosed, EyeOff } from "lucide-react";
+import { assets } from "../../assets/assets";
+import { GoogleAuthProvider } from "firebase/auth";
 const AuthForm = () => {
   //change from with states
   const [state, setState] = useState("signup");
@@ -24,6 +26,7 @@ const AuthForm = () => {
   };
 //show password 
 const [showPassword, setShowPassword] = useState(false);
+//login
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -38,6 +41,7 @@ const [showPassword, setShowPassword] = useState(false);
           email: formData.email,
           role: "user",
           isActive: true,
+          createdAt: new Date().toISOString()
         });
       }
       toast.success("Account create success!");
@@ -93,18 +97,48 @@ const loginHandler=async(e)=>{
     })
   }
 }
+//google signup
+const provider=new GoogleAuthProvider()
+const signWithGoogle=async()=>{
+try {
+  const result=await signInWithPopup(auth,provider)
+  const user=result.user
+  if(user){
+    const userRef = doc(db, 'users', user.uid);
+     const userSnap = await getDoc(userRef);
+     if(!userSnap.exists()){
+       await setDoc(userRef, {
+            email: user.email,
+            role: "user",
+            isActive: true,
+            createdAt: new Date().toISOString()
+          });
+     }
+     toast.success(state=='login'?`login success!`:`signup success!`)
+  }
+  
+} catch (error) {
+  toast.error(error.message)
+}
+}
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
-      <form
+    <div className="lg:grid lg:grid-cols-2 rounded-xl shadow-xl mt-10 lg:max-w-4xl mx-auto">
+     <div className=" rounded-sm max-h-5xl hidden lg:block bg-blue-50">
+    <div className="w-full flex justify-center items-center h-full">
+      <img src={state=='login'?assets.doc9:assets.loginpng} alt="" className="w-[300px]"/>
+    </div>
+     </div>
+     <div className="mx-auto flex justify-center w-full">
+ <form
         onSubmit={state==='login'?loginHandler:handleSubmit}
-        className="flex flex-col gap-4 items-start p-8 w-full max-w-md border border-gray-300 rounded-xl text-zinc-600 text-sm shadow-lg bg-white"
+        className="flex flex-col gap-4 items-start p-8 w-full text-zinc-600 text-sm shadow-lg bg-[#FFFFFF]"
       >
         {/* Header Section */}
         <div>
-          <h2 className="text-2xl font-semibold text-zinc-800">
+          <h2 className="text-3xl font-bold tracking-tight text-zinc-900">
             {state === "signup" ? "Create Account" : "Login"}
           </h2>
-          <p className="text-zinc-500 mt-1">
+          <p className="text-zinc-500 mt-2">
             {state === "signup"
               ? "Please sign up to book appointment"
               : "Please login to book appointment"}
@@ -116,7 +150,7 @@ const loginHandler=async(e)=>{
           <div className="w-full">
             <label
               htmlFor="fullName"
-              className="text-sm font-medium text-zinc-700"
+              className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider"
             >
               Full Name
             </label>
@@ -135,7 +169,7 @@ const loginHandler=async(e)=>{
 
         {/* Email Field */}
         <div className="w-full">
-          <label htmlFor="email" className="text-sm font-medium text-zinc-700">
+          <label htmlFor="email" className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider">
             Email Address
           </label>
           <input
@@ -154,7 +188,7 @@ const loginHandler=async(e)=>{
         <div className="w-full">
           <label
             htmlFor="password"
-            className="text-sm font-medium text-zinc-700"
+            className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider"
           >
             Password
           </label>
@@ -188,14 +222,31 @@ const loginHandler=async(e)=>{
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded mt-2 transition duration-200"
-        >
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm hover:shadow transition duration-200 disabled:opacity-70"
+          >
+        
           {loading ||loginLoading
             ? "loading...."
             : state === "signup"
               ? "Create Account"
               : "Login"}
         </button>
+        <div className="flex items-center w-full">
+  <div className="flex-1 border-t border-zinc-200"></div>
+  <span className="mx-4 text-zinc-400 text-xs uppercase tracking-wider select-none">Or</span>
+  <div className="flex-1 border-t border-zinc-200"></div>
+</div>
+         <div className="flex justify-center w-full">
+ <button 
+ onClick={signWithGoogle}
+            type="button" 
+            className="flex justify-center items-center gap-2 border border-zinc-300 hover:bg-zinc-50 text-zinc-700 font-medium py-2.5 px-4 rounded-lg shadow-sm transition duration-200 w-full"
+          >
+            <img src={assets.google} className="w-5 h-5" alt="Google logo"/>
+            Continue with Google
+          </button>
+        
+</div>
 
         {/* State Toggle Link */}
         <p className="text-zinc-500 mt-2 text-center w-full">
@@ -209,13 +260,18 @@ const loginHandler=async(e)=>{
             {state === "signup" ? "Login here" : "Sign up here"}
           </span>
         </p>
+     
         {state !== "signup" && (
           <>
-            <p>Doctors Login</p>
+           <div className="border-t border-zinc-100 h-1 w-full"></div>
+           <div className="flex items-center justify-center w-full gap-2">
+             <p>Doctors Login</p> |
             <p>Admin Login</p>
+           </div>
           </>
         )}
       </form>
+     </div>
     </div>
   );
 };
