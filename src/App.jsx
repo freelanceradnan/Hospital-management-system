@@ -8,6 +8,7 @@ import MyProfile from "./Pages/MyProfile/MyProfile";
 import MyAppointment from "./Pages/MyAppointment/MyAppointment";
 import Navbar from "./Components/Navbar/Navbar";
 import Footer from './Components/Footer/Footer'
+import LoginPrivate from "./Components/LoginPrivate/LoginPrivate";
 
 function App() {
 
@@ -22,7 +23,11 @@ function App() {
   <Route path="/" element={<Home/>}/>
   <Route path="/doctors" element={<Doctors/>}/>
   <Route path="/doctors/:spaciality" element={<Doctors/>}/>
-  <Route path="/login" element={<Login/>}/>
+  <Route path="/login" element={
+    <LoginPrivate>
+      <Login/>
+    </LoginPrivate>
+  }/>
   <Route path="/about" element={<About/>}/>
   <Route path="/contact" element={<Contact/>}/>
   <Route path="/my-profile" element={<MyProfile/>}/>
