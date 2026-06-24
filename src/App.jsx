@@ -4,16 +4,29 @@ import Doctors from './Pages/Doctors/Doctors';
 import About from "./Pages/About/About";
 import Contact from './Pages/Contact/Contact';
 import Login from "./Pages/Login/Login";
-import MyProfile from "./Pages/MyProfile/MyProfile";
-import MyAppointment from "./Pages/MyAppointment/MyAppointment";
+
 import Navbar from "./Components/Navbar/Navbar";
 import Footer from './Components/Footer/Footer'
 import LoginPrivate from "./Components/LoginPrivate/LoginPrivate";
 import Notfound from "./Pages/NotFound/Notfound";
 
+
+import MyProfileManagement from './Components/UserDashboard/MyProfileManagement';
+import MyTelehealth from "./Components/UserDashboard/MyTelehealth";
+import MyBillings from "./Components/UserDashboard/MyBillings";
+import MyRecords from "./Components/UserDashboard/MyRecords";
+import MyAppointment from "./Components/UserDashboard/MyAppointments";
+import MyDashboard from './Pages/MyDashboard/MyDashboard'
+import UserPrivate from "./Components/UserPrivate/UserPrivate";
+
+
+
+
+
+
 function App() {
 const location=useLocation()
-const allroutes = ["/", "/doctors", "/login",'/about','/contact'];
+const allroutes = ["/", "/doctors", "/login",'/about','/contact','/my-dashboard','/my-dashboard/myAccount','/my-dashboard/myAppointment','/my-dashboard/telehealth','/my-dashboard/billings','/my-dashboard/myrecords','/my-dashboard/myrecords'];
 const isKnownPath = allroutes.some((path) => location.pathname === path)||
 location.pathname.startsWith('/doctors')||
 location.pathname.startsWith('/appointment')
@@ -37,7 +50,17 @@ const showFooter = isKnownPath && !isAdminPath;
   }/>
   <Route path="/about" element={<About/>}/>
   <Route path="/contact" element={<Contact/>}/>
-  <Route path="/my-profile" element={<MyProfile/>}/>
+  <Route path="/my-dashboard" element={
+    <UserPrivate>
+      <MyDashboard/>
+    </UserPrivate>
+    }>
+  <Route path="myAccount" element={<MyProfileManagement/>}/>
+  <Route path="myAppointment" element={<MyAppointment/>}/>
+  <Route path="telehealth" element={<MyTelehealth/>}/>
+  <Route path="billings" element={<MyBillings/>}/>
+  <Route path="myrecords" element={<MyRecords/>}/>
+  </Route>
   <Route path="/my-appointment" element={<MyAppointment/>}/>
   <Route path="/appointment/:id" element={<MyAppointment/>}/>
   
