@@ -9,7 +9,7 @@ import { assets } from "../../assets/assets";
 import { GoogleAuthProvider } from "firebase/auth";
 const AuthForm = () => {
   //change from with states
-  const [state, setState] = useState("signup");
+  const [state, setState] = useState("login");
   const [loading, setLoading] = useState(false);
   // Form input states
   const [formData, setFormData] = useState({
@@ -122,7 +122,7 @@ try {
 }
 }
   return (
-    <div className="lg:grid lg:grid-cols-2 rounded-xl shadow-xl mt-10 lg:max-w-4xl mx-auto">
+    <div className="lg:grid lg:grid-cols-2 rounded-xl shadow-xl mt-10 lg:max-w-4xl mx-auto max-w-sm">
      <div className=" rounded-sm max-h-5xl hidden lg:block bg-blue-50">
     <div className="w-full flex justify-center items-center h-full">
       <img src={state=='login'?assets.doc9:assets.loginpng} alt="" className="w-[300px]"/>

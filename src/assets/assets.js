@@ -38,8 +38,11 @@ import Neurologist from './Neurologist.svg'
 import Pediatricians from './Pediatricians.svg'
 import loginpng from './login.png'
 import google from './google.png'
-
+import closeicon from './closeIcon.svg'
+import menuIcon from './menu_icon.svg'
 export const assets = {
+    menuIcon,
+    closeicon,
     loginpng,
     google,
     doc9,
