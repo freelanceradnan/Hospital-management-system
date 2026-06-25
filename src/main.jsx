@@ -5,10 +5,13 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { MainContextProvider } from './Contexts/MainContext.jsx'
 import { ToastContainer } from 'react-toastify'
+import { Provider } from 'react-redux'
+import { store } from './Store/Store.js'
 
 createRoot(document.getElementById('root')).render(
 
-<MainContextProvider>
+<Provider store={store}>
+  <MainContextProvider>
     <BrowserRouter>
      <ToastContainer 
       position="top-center"
@@ -18,5 +21,6 @@ createRoot(document.getElementById('root')).render(
     <App />
  </BrowserRouter>
 </MainContextProvider>
+</Provider>
   
 )

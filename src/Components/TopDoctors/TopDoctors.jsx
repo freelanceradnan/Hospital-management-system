@@ -1,11 +1,32 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { MainContext } from "../../Contexts/MainContext";
+import { useGetAllDoctorsQuery } from "../../Feature/ApiSlice";
 
 const TopDoctors = () => {
-    const {doctors}=useContext(MainContext)
+    const {data:allDoctors,isLoading}=useGetAllDoctorsQuery()
+    const [doctors,setDoctors]=useState([])
+    // const {doctors}=useContext(MainContext)
     const navigate=useNavigate()
+    useEffect(()=>{
+    if(allDoctors){
+        setDoctors(allDoctors)
+    }
+    },[allDoctors])
+   if (isLoading) {
+    return (
+       <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 p-5">
+    {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+      <div key={num} className=" p-4 rounded-xl animate-pulse bg-gray-100">
+        <div className="w-full h-40 bg-gray-300 rounded-md"></div>
+        <div className="w-20 h-4 bg-gray-300 mt-3 rounded"></div>
+        <div className="w-full h-6 bg-gray-300 mt-2 rounded"></div>
+      </div>
+    ))}
+  </div>
+    );
+  }
   return (
      <div className="flex items-center justify-center flex-col gap-4 my-16 text-gray-900 md:mx-10">
  
