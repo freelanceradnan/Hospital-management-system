@@ -27,7 +27,7 @@ const Doctors = () => {
 
     useEffect(() => {
         applyFilter();
-         console.log(spaciality)
+         
     }, [spaciality, doctors]);
 
     const handleNavigation = (currentSpeciality) => {

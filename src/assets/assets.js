@@ -40,7 +40,9 @@ import loginpng from './login.png'
 import google from './google.png'
 import closeicon from './closeIcon.svg'
 import menuIcon from './menu_icon.svg'
+import userpng from './user (2).png'
 export const assets = {
+    userpng,
     menuIcon,
     closeicon,
     loginpng,

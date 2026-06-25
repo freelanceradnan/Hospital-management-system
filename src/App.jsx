@@ -18,6 +18,7 @@ import MyRecords from "./Components/UserDashboard/MyRecords";
 import MyAppointment from "./Components/UserDashboard/MyAppointments";
 import MyDashboard from './Pages/MyDashboard/MyDashboard'
 import UserPrivate from "./Components/UserPrivate/UserPrivate";
+import DoctorAppointment from "./Pages/DoctorAppointement/DoctorAppointment";
 
 
 
@@ -43,6 +44,7 @@ const showFooter = isKnownPath && !isAdminPath;
   <Route path="/" element={<Home/>}/>
   <Route path="/doctors" element={<Doctors/>}/>
   <Route path="/doctors/:spaciality" element={<Doctors/>}/>
+  <Route path="/appointment/:id" element={<DoctorAppointment/>}/>
   <Route path="/login" element={
     <LoginPrivate>
       <Login/>
