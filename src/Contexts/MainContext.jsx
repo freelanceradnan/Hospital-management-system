@@ -49,6 +49,7 @@ export const MainContextProvider = ({ children }) => {
 
   return () => unsubscribe();
 }, []);
+
   const value = {
     doctors,islogin,role,currentUser,loading
   };

@@ -7,6 +7,7 @@ import { signInWithEmailAndPassword } from "firebase/auth/cordova";
 import { Eye, EyeClosed, EyeOff } from "lucide-react";
 import { assets } from "../../assets/assets";
 import { GoogleAuthProvider } from "firebase/auth";
+import { Link, useNavigate } from "react-router-dom";
 const AuthForm = () => {
   //change from with states
   const [state, setState] = useState("login");
@@ -17,6 +18,7 @@ const AuthForm = () => {
     email: "",
     password: "",
   });
+  const navigate=useNavigate()
   const [loginLoading,setLoginLoading]=useState(false)
   const handleChange = (e) => {
     setFormData({
@@ -264,9 +266,13 @@ try {
         {state !== "signup" && (
           <>
            <div className="border-t border-zinc-100 h-1 w-full"></div>
-           <div className="flex items-center justify-center w-full gap-2">
-             <p>Doctors Login</p> |
-            <p>Admin Login</p>
+           <div className="flex items-center justify-center w-full gap-2 text-sm text-blue-500 font-bold">
+            <Link to="/admin-login" state={{ role: "admin" }}>
+  <p>Admin Login</p>
+</Link> | 
+             <Link to="/admin-login" state={{ role: "doctor" }}>
+  <p>Doctor Login</p>
+</Link>
            </div>
           </>
         )}

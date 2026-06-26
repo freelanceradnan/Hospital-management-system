@@ -19,6 +19,15 @@ import MyAppointment from "./Components/UserDashboard/MyAppointments";
 import MyDashboard from './Pages/MyDashboard/MyDashboard'
 import UserPrivate from "./Components/UserPrivate/UserPrivate";
 import DoctorAppointment from "./Pages/DoctorAppointement/DoctorAppointment";
+import AdminLogin from "./Pages/AdminLogin/AdminLogin";
+import AdminDashboard from "./Pages/AdminDashboard/AdminDashboard";
+import DashboardOverview from "./Components/AdminDashboard/DashboardOverview";
+import DoctorManagement from "./Components/AdminDashboard/DoctorManagement";
+import AppointmentManagment from "./Components/AdminDashboard/AppointmentManagment";
+import PatientManagement from "./Components/AdminDashboard/PatientManagement";
+import PaymentManagement from "./Components/AdminDashboard/PaymentManagement";
+import Settings from "./Components/AdminDashboard/AdminSettings";
+import AdminSettings from "./Components/AdminDashboard/AdminSettings";
 
 
 
@@ -27,7 +36,7 @@ import DoctorAppointment from "./Pages/DoctorAppointement/DoctorAppointment";
 
 function App() {
 const location=useLocation()
-const allroutes = ["/", "/doctors", "/login",'/about','/contact','/my-dashboard','/my-dashboard/myAccount','/my-dashboard/myAppointment','/my-dashboard/telehealth','/my-dashboard/billings','/my-dashboard/myrecords','/my-dashboard/myrecords'];
+const allroutes = ["/", "/doctors", "/login",'/about','/contact','/my-dashboard','/my-dashboard/myAccount','/my-dashboard/myAppointment','/my-dashboard/telehealth','/my-dashboard/billings','/my-dashboard/myrecords','/my-dashboard/myrecords','/admin-login'];
 const isKnownPath = allroutes.some((path) => location.pathname === path)||
 location.pathname.startsWith('/doctors')||
 location.pathname.startsWith('/appointment')
@@ -35,8 +44,9 @@ const isAdminPath = location.pathname.startsWith('/admin-dashboard');
 const showFooter = isKnownPath && !isAdminPath;
 
   return (
+    
   <>
- <div className="mx-4 sm:mx-[10%]">
+<div className={!isAdminPath ? 'mx-4 sm:mx-[10%]' : 'mx-0 sm:mx-0'}>
   {/* navbar */}
  {showFooter &&  <Navbar/>}
   {/* routes */}
@@ -50,6 +60,16 @@ const showFooter = isKnownPath && !isAdminPath;
       <Login/>
     </LoginPrivate>
   }/>
+  <Route path="/admin-dashboard" element={<AdminDashboard/>}>
+  <Route path="" element={<DashboardOverview/>}/>
+  <Route path="DoctorManagement" element={<DoctorManagement/>}/>
+  <Route path="AppointmentManagement" element={<AppointmentManagment/>}/>
+  <Route path="PatientManagement" element={<PatientManagement/>}/>
+  <Route path="PaymentManagement" element={<PaymentManagement/>}/>
+  <Route path="AdminSettings" element={<AdminSettings/>}/>
+
+  </Route>
+  <Route path="/admin-login" element={<AdminLogin/>}/>
   <Route path="/about" element={<About/>}/>
   <Route path="/contact" element={<Contact/>}/>
   <Route path="/my-dashboard" element={

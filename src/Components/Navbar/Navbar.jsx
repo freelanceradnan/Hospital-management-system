@@ -10,6 +10,12 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { islogin, role, currentUser, loading } = useContext(MainContext);
+  //redirect to admin dashboard
+useEffect(() => {
+    if (!loading && islogin && role === 'admin') {
+      navigate('/admin-dashboard');
+    }
+  }, [role, islogin, loading, navigate]);
   useEffect(() => {});
   if (loading) {
     return (

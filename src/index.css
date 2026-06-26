@@ -11,3 +11,8 @@
 *{
     font-family: Outfit;
 }
+@layer base {
+  body {
+    font-family: 'Outfit', sans-serif;
+  }
+}
