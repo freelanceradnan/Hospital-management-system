@@ -109,7 +109,7 @@ const DoctorAppointment = () => {
 
         <div className="w-full md:w-64 bg-[#5463ec] rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
           <img
-            className="w-full h-64 md:h-full object-cover object-top hover:scale-105 transition-transform duration-300"
+            className="w-full max-h-64 object-cover object-top hover:scale-105 transition-transform duration-300"
             src={appointmentdata.image}
             alt={appointmentdata.name}
           />
@@ -170,47 +170,66 @@ const DoctorAppointment = () => {
         <h3 className="text-lg font-bold text-gray-700 mb-4">Booking slots</h3>
 
         {/* Days Carousel/Row */}
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin flex-wrap">
-          {days.map((item) => {
-            const active = selectedDay === item.day;
-            return (
-              <button
-                key={item.day}
-                onClick={() => setSelectedDay(item.day)}
-                className={`flex flex-col items-center justify-center min-w-[60px] py-4 rounded-full border transition-all ${
-                  active
-                    ? "bg-[#5f6fff] border-blue-600 text-white"
-                    : "border-gray-200 text-gray-500 hover:bg-gray-50"
-                }`}
-              >
-                <span className="text-xs uppercase font-medium">
-                  {item.day}
-                </span>
-                <span className="text-base font-bold mt-0.5">{item.date}</span>
-              </button>
-            );
-          })}
-        </div>
+    
+<div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin flex-wrap">
+  {
+  
+    [...new Set(appointmentdata?.Slots?.map(item => item.day))].map((day) => {
+   
+      const active = selectedDay === day;
+
+      return (
+        <button
+          key={day}
+          onClick={() => setSelectedDay(day)}
+          className={`flex flex-col items-center justify-center min-w-[60px] py-4 rounded-full border transition-all ${
+            active
+              ? "bg-[#5f6fff] border-blue-600 text-white"
+              : "border-gray-200 text-gray-500 hover:bg-gray-50"
+          }`}
+        >
+         
+          <span className="text-xs uppercase font-medium">
+            {day && day.split(' ')[0]}
+          </span>
+          <span className="text-base font-bold mt-0.5">
+            {day && day.split(' ')[1]}
+          </span>
+        </button>
+      );
+    })
+  }
+</div>
+
+<div>
+
+</div>
 
         {/* Hours Selection Row */}
         <div className="flex gap-3 mt-6 overflow-x-auto pb-2">
-          {times.map((time) => {
-            const active = selectedTime === time;
-            return (
-              <button
-                key={time}
-                onClick={() => setSelectedTime(time)}
-                className={`py-2 px-5 text-xs font-semibold rounded-full border tracking-wide whitespace-nowrap transition-all ${
-                  active
-                    ? "bg-[#5f6fff] border-blue-600 text-white"
-                    : "border-gray-200 text-gray-500 hover:bg-gray-50"
-                }`}
-              >
-                {time}
-              </button>
-            );
-          })}
-        </div>
+  {appointmentdata?.Slots?.filter(item => item.day === selectedDay).map((item, index) => {
+
+    const active = selectedTime === item.time; 
+    
+    return (
+      <button
+        key={index}
+        disabled={item.isBooked} 
+        onClick={() => setSelectedTime(item.time)} 
+        className={`py-2 px-5 text-xs font-semibold rounded-full border tracking-wide whitespace-nowrap transition-all ${
+          item.isBooked
+            ? "bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200" 
+            : active
+              ? "bg-[#5f6fff] border-blue-600 text-white" 
+              : "border-gray-200 text-gray-500 hover:bg-gray-50"
+        }`}
+      >
+        
+        {item.time} 
+      </button>
+    );
+  })}
+</div>
 
         {/* Action Call Button */}
         <div className="mt-6">

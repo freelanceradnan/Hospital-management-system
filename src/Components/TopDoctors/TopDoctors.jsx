@@ -40,7 +40,7 @@ const TopDoctors = () => {
         {doctors.slice(0,10).map((item,index)=>(
          
          <div key={index} className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500" onClick={()=>navigate(`/appointment/${item.id}`,scrollTo(0,0))}>
-        <img src={item.image} alt="" className="bg-blue-50"/>
+        <img src={item.image} alt="" className="bg-blue-50 max-h-60"/>
        
         <div className="p-4">
             <div className="flex items-center gap-2 text-sm text-center text-green-500">

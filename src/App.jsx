@@ -28,6 +28,7 @@ import PatientManagement from "./Components/AdminDashboard/PatientManagement";
 import PaymentManagement from "./Components/AdminDashboard/PaymentManagement";
 import Settings from "./Components/AdminDashboard/AdminSettings";
 import AdminSettings from "./Components/AdminDashboard/AdminSettings";
+import AddDoctor from "./Components/AdminDashboard/AddDoctor";
 
 
 
@@ -63,6 +64,7 @@ const showFooter = isKnownPath && !isAdminPath;
   <Route path="/admin-dashboard" element={<AdminDashboard/>}>
   <Route path="" element={<DashboardOverview/>}/>
   <Route path="DoctorManagement" element={<DoctorManagement/>}/>
+  <Route path="AddDoctor" element={<AddDoctor/>}/>
   <Route path="AppointmentManagement" element={<AppointmentManagment/>}/>
   <Route path="PatientManagement" element={<PatientManagement/>}/>
   <Route path="PaymentManagement" element={<PaymentManagement/>}/>

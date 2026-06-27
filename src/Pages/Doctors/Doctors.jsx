@@ -161,7 +161,7 @@ if(isLoading){
                             className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500" 
                             onClick={() => navigate(`/appointment/${item.id}`)}
                         >
-                            <img src={item.image} alt={item.name} className="bg-blue-50 w-full object-cover"/>
+                            <img src={item.image} alt={item.name} className="bg-blue-50 w-full object-cover max-h-60"/>
                             <div className="p-4">
                                 <div className="flex items-center gap-2 text-sm text-center text-green-500">
                                     <p className="w-2 h-2 bg-green-500 rounded-full"></p>

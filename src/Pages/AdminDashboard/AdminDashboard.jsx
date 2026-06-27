@@ -149,7 +149,7 @@ const AdminDashboard = () => {
             </button>
           </div>
           
-     <div className="flex items-center justify-between gap-14 p-4 w-full">
+     <div className="flex items-center justify-between gap-4 p-4 w-full">
   
   <div className='relative mx-2'>
     <Search className='absolute top-2 left-2 text-gray-400'/>
@@ -158,7 +158,7 @@ const AdminDashboard = () => {
       name="search" 
       id="search" 
       placeholder="Search anything here...." 
-      className="rounded border border-gray-100 px-3 py-1.5 focus:outline-none focus:border-blue-500 md:min-w-[350px] pl-10"
+      className="rounded border border-gray-100 px-3 py-1.5 focus:outline-none focus:border-blue-500 pl-10 w-full lg:min-w-[350px]"
     />
   </div>
 
