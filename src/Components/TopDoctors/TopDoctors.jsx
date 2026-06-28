@@ -11,7 +11,8 @@ const TopDoctors = () => {
     const navigate=useNavigate()
     useEffect(()=>{
     if(allDoctors){
-        setDoctors(allDoctors)
+        const filteredDoctor=allDoctors.filter(c=>c.isActive==true)
+        setDoctors(filteredDoctor)
     }
     },[allDoctors])
    if (isLoading) {

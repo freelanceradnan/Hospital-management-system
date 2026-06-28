@@ -12,7 +12,8 @@ const Doctors = () => {
     const [doctors,setDoctors]=useState([])
       useEffect(()=>{
          if(allDoctors){
-             setDoctors(allDoctors)
+           const filteredDoctor=allDoctors.filter(c=>c.isActive==true)
+             setDoctors(filteredDoctor)
          }
          },[allDoctors])
     const specialityList = [

@@ -18,17 +18,26 @@ const AddDoctor = () => {
     email: "",
     password: "",
   });
+   
   const [details, setDetails] = useState({
     name: "",
     speciality: "",
     experience: "",
     fees: "",
     degree: "",
+    isActive: true,
     about: "",
     Slots: [],
     image: "",
   });
-
+  console.log(details)
+const setIsActive = (e) => {
+  const { name, value } = e.target;
+  setDetails((prev) => ({
+    ...prev,
+    isActive: value === 'true' 
+  }));
+};
   const changeHandler = (e) => {
     const { name, value } = e.target;
     setDetails((prev) => ({
@@ -148,7 +157,7 @@ const AddDoctor = () => {
       setLoading(false);
     }
   };
-
+console.log(details)
   return (
     <div className="max-w-4xl mx-auto bg-white shadow-md rounded-xl p-6 border border-gray-100">
       {/* Header section */}
@@ -284,6 +293,15 @@ const AddDoctor = () => {
               placeholder="Write something about doctor's expertise..."
               onChange={changeHandler}
             />
+          </div>
+          <div className="flex flex-col gap-1.5 md:col-span-2">
+            <label className="text-sm font-semibold text-gray-700">
+              Select Avaiblity
+            </label>
+            <select name="isActive" className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-[#5f6fff] focus:ring-1 focus:ring-[#5f6fff] outline-none transition-all" value={details.isActive} onChange={setIsActive}>
+              <option value="true">Available</option>
+              <option value="false">Not Available</option>
+            </select>
           </div>
         </div>
 
