@@ -4,16 +4,18 @@ import { doc } from "firebase/firestore";
 import { db } from "./../../Firebase/Firebase";
 import { MainContext } from "../../Contexts/MainContext";
 import { toast } from "react-toastify";
-import { useGetAllDoctorsQuery } from "../../Feature/ApiSlice";
+import { useGetAllCategoriesQuery, useGetAllDoctorsQuery } from "../../Feature/ApiSlice";
 
 const DoctorAppointment = () => {
   const { data: allDoctors, isLoading } = useGetAllDoctorsQuery();
   const [doctors, setDoctors] = useState([]);
+  const {data:allCategories}=useGetAllCategoriesQuery()
   const [appointmentdata, setAppointementData] = useState({});
   const { islogin, role, currentUser, loading } = useContext(MainContext);
   const [selectedDay, setSelectedDay] = useState("Mon");
   const { id } = useParams();
   const [selectedTime, setSelectedTime] = useState("8.00 am");
+  const filteredSpecility=allCategories?.find(c=>c.id==appointmentdata.categoryId)
 
    useEffect(()=>{
    if(allDoctors){
@@ -140,7 +142,7 @@ const DoctorAppointment = () => {
               {appointmentdata.degree}
             </p>
             <p className="text-sm font-medium border border-gray-200 px-2.5 py-0.5 rounded-full">
-              {appointmentdata.speciality}
+              {filteredSpecility?.name||"uncategorized"}
             </p>
             <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded border">
               {appointmentdata.experience}

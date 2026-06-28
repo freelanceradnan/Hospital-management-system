@@ -39,7 +39,29 @@ export const ApiSlice=createApi({
               return {error:{message:"failed to add doctors"}}  
             }
         }
-    })
+    }),
+    getAllCategories: builder.query({
+  async queryFn() {
+    try {
+      const docRef = collection(db, 'Categories');
+      const docSnap = await getDocs(docRef);
+     
+      return {
+        data: docSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })),
+      };
+    } catch (error) {
+      return {
+        error: {
+          message: error.message || 'Failed to fetch categories',
+          originalError: error,
+        },
+      };
+    }
+  },
+}),
     })
 })
-export const {useGetAllDoctorsQuery,useAddDoctorMutation}=ApiSlice
+export const {useGetAllDoctorsQuery,useAddDoctorMutation,useGetAllCategoriesQuery}=ApiSlice

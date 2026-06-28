@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import uploadToCloudinary from "../../Utils/Cloudinary";
-import { useAddDoctorMutation } from "../../Feature/ApiSlice";
+import {
+  useAddDoctorMutation,
+  useGetAllCategoriesQuery,
+} from "../../Feature/ApiSlice";
 import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../Firebase/Firebase";
@@ -11,6 +14,8 @@ import { sentDoctorSignEmail } from "../../Utils/SentDoctorSignEmail";
 const AddDoctor = () => {
   const navigate = useNavigate();
   const [addDoctor] = useAddDoctorMutation();
+  const { data: allCategories } = useGetAllCategoriesQuery();
+
   const [slotDay, setSlotDay] = useState("");
   const [slotTime, setSlotTime] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,10 +23,9 @@ const AddDoctor = () => {
     email: "",
     password: "",
   });
-   
+
   const [details, setDetails] = useState({
     name: "",
-    speciality: "",
     experience: "",
     fees: "",
     degree: "",
@@ -30,14 +34,22 @@ const AddDoctor = () => {
     Slots: [],
     image: "",
   });
-  console.log(details)
-const setIsActive = (e) => {
-  const { name, value } = e.target;
+ const changeCategory = (e) => {
+  const { value } = e.target;
+  
   setDetails((prev) => ({
     ...prev,
-    isActive: value === 'true' 
+    categoryId: value
   }));
 };
+   
+  const setIsActive = (e) => {
+    const { name, value } = e.target;
+    setDetails((prev) => ({
+      ...prev,
+      isActive: value === "true",
+    }));
+  };
   const changeHandler = (e) => {
     const { name, value } = e.target;
     setDetails((prev) => ({
@@ -103,8 +115,15 @@ const setIsActive = (e) => {
   // Submit Doctor Data
   const submitDoctor = async (e) => {
     e.preventDefault();
-    if (!details.name || !details.speciality || !details.fees || !details.image) {
-      toast.error("Please fill in all required fields (Name, Speciality, Fees, Image)");
+    if (
+      !details.name ||
+      !details.categoryId ||
+      !details.fees ||
+      !details.image
+    ) {
+      toast.error(
+        "Please fill in all required fields (Name, Speciality, Fees, Image)",
+      );
       return;
     }
     if (!doctorsDetails.email || !doctorsDetails.password) {
@@ -117,11 +136,11 @@ const setIsActive = (e) => {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         doctorsDetails.email,
-        doctorsDetails.password
+        doctorsDetails.password,
       );
 
       const userId = userCredential.user.uid;
-      const userDocRef = doc(db, "users", userId); 
+      const userDocRef = doc(db, "users", userId);
       await setDoc(userDocRef, {
         email: doctorsDetails.email,
         role: "doctor",
@@ -131,25 +150,34 @@ const setIsActive = (e) => {
 
       const finalDoctorData = {
         ...details,
-        uid: userId, 
+        uid: userId,
       };
-      
+
       await addDoctor(finalDoctorData).unwrap();
       toast.success("Doctor added successfully!");
-      await sentDoctorSignEmail({ email: doctorsDetails.email, password: doctorsDetails.password });
-      toast.success("doctors Added Success! Doctor email sent success!")
+      await sentDoctorSignEmail({
+        email: doctorsDetails.email,
+        password: doctorsDetails.password,
+      });
+      toast.success("doctors Added Success! Doctor email sent success!");
       // Reset States
       setDetails({
-        name: "", speciality: "", experience: "", fees: "",
-        degree: "", about: "", Slots: [], image: "",
+        name: "",
+        speciality: "",
+        experience: "",
+        fees: "",
+        degree: "",
+        about: "",
+        Slots: [],
+        image: "",
       });
       setDoctorsDetails({ email: "", password: "" });
-      
+
       navigate("/admin-dashboard/DoctorManagement");
     } catch (error) {
       console.error("Submission Error: ", error);
-      if (error.code === 'auth/email-already-in-use') {
-        toast.error('This email is already registered!');
+      if (error.code === "auth/email-already-in-use") {
+        toast.error("This email is already registered!");
       } else {
         toast.error(error.message || "Failed to add doctor");
       }
@@ -157,7 +185,8 @@ const setIsActive = (e) => {
       setLoading(false);
     }
   };
-console.log(details)
+  console.log(details)
+
   return (
     <div className="max-w-4xl mx-auto bg-white shadow-md rounded-xl p-6 border border-gray-100">
       {/* Header section */}
@@ -227,15 +256,16 @@ console.log(details)
             <label className="text-sm font-semibold text-gray-700">
               Speciality <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              name="speciality"
-              value={details.speciality}
-              required
-              className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-[#5f6fff] focus:ring-1 focus:ring-[#5f6fff] outline-none transition-all"
-              placeholder="Cardiologist, Neurologist"
-              onChange={changeHandler}
-            />
+            <select name="categoryId" id=""  className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-[#5f6fff] focus:ring-1 focus:ring-[#5f6fff] outline-none transition-all" onChange={changeCategory}>
+              <option>--select---</option>
+              {allCategories?.map((category)=>(
+                
+              
+               
+                <option value={category.id} key={category.id}>{category.name}</option>
+               
+              ))}
+            </select>
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -298,7 +328,13 @@ console.log(details)
             <label className="text-sm font-semibold text-gray-700">
               Select Avaiblity
             </label>
-            <select name="isActive" className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-[#5f6fff] focus:ring-1 focus:ring-[#5f6fff] outline-none transition-all" value={details.isActive} onChange={setIsActive}>
+            <select
+              name="isActive"
+              className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-[#5f6fff] focus:ring-1 focus:ring-[#5f6fff] outline-none transition-all"
+              value={details.isActive}
+              onChange={setIsActive}
+            >
+             
               <option value="true">Available</option>
               <option value="false">Not Available</option>
             </select>
@@ -383,14 +419,18 @@ console.log(details)
               Doctor Login Credentials
             </h3>
             <p className="text-xs text-indigo-600">
-              These credentials will be used by the doctor to securely log into their profile panel.
+              These credentials will be used by the doctor to securely log into
+              their profile panel.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold text-gray-700">
-                Doctor Login Email <span className="text-red-500">*(User password deliveried with email)</span>
+                Doctor Login Email{" "}
+                <span className="text-red-500">
+                  *(User password deliveried with email)
+                </span>
               </label>
               <input
                 type="email"
@@ -402,7 +442,7 @@ console.log(details)
                 onChange={changeDoctorHandler}
               />
             </div>
-            
+
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold text-gray-700">
                 Temporary Password <span className="text-red-500">*</span>
@@ -431,9 +471,24 @@ console.log(details)
           >
             {loading ? (
               <>
-                <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                <svg
+                  className="animate-spin h-4 w-4 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
                 </svg>
                 Processing...
               </>

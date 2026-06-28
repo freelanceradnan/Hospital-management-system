@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGetAllDoctorsQuery } from '../../Feature/ApiSlice';
 
 const DoctorManagement = () => {
     const navigate=useNavigate()
+    const {data:AllDoctors}=useGetAllDoctorsQuery()
+ 
     const tempDoctor=[
         {name:"adnan dev",status:"active"},
         {name:"Ridoy dev",status:"active"},
@@ -10,7 +13,9 @@ const DoctorManagement = () => {
         {name:"shakib dev",status:"active"},
         {name:"shuvo dev",status:"active"},
     ]
-
+    const activeDoctor = useMemo(() => {
+  return AllDoctors?.filter(doc => doc.isActive === true);
+}, [AllDoctors]);
     return (
         <div className='flex flex-col gap-4'>
             {/* header-page */}
@@ -24,9 +29,18 @@ const DoctorManagement = () => {
            </div>
            {/* counter-div */}
            <div className='flex items-center justify-between gap-2'>
-            <div className='border w-full min-h-[100px] rounded-sm'>Total Doctors</div>
-            <div className='border w-full min-h-[100px] rounded-sm'>Available Doctors</div>
-            <div className='border w-full min-h-[100px] rounded-sm'>Unavailable Doctors</div>
+            <div className='border w-full min-h-[100px] rounded-sm'>
+               <p>All Doctors</p>
+               <h2>{AllDoctors?.length}</h2>
+            </div>
+            <div className='border w-full min-h-[100px] rounded-sm'>
+                <p>Available Doctors</p>
+                <h2>{activeDoctor?.length}</h2>
+            </div>
+            <div className='border w-full min-h-[100px] rounded-sm'>
+                <p>UnAvailable Doctors</p>
+                {AllDoctors?.length-activeDoctor?.length}
+            </div>
             <div className='border w-full min-h-[100px] rounded-sm'>Total Catagory</div>
            </div>
            <div className='flex justify-between'>

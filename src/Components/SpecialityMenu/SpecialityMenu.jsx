@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { specialityData } from '../../assets/assets';
 import { Link } from 'react-router-dom';
+import { useGetAllCategoriesQuery } from '../../Feature/ApiSlice';
 
 const SpecialityMenu = () => {
+    const {data:allCategories=[]}=useGetAllCategoriesQuery()
+    const categories = useMemo(() => {
+  return allCategories?.filter(c => c.isActive==true) || [];
+}, [allCategories]);
     return (
         <div id='speciality' className='flex flex-col items-center gap-4 py-16 text-gray-800'>
             <h1 className='text-3xl font-medium'>Find by Speciality </h1>
@@ -10,10 +15,10 @@ const SpecialityMenu = () => {
 
 </p>
 <div className='flex justify-center gap-4 pt-5 w-full flex-wrap items-center'>
-{specialityData.map((item,index)=>(
-    <Link key={index} to={`/doctors/${item.speciality}`} onClick={()=>scrollTo(0,0)}className='flex flex-col items-center text-xs cursor-pointer flex-shrink-0 hover:translate-y-[-10px] transition-all duration-500'>
+{categories?.map((item,index)=>(
+    <Link key={index} to={`/doctors/${item.name}`} onClick={()=>scrollTo(0,0)}className='flex flex-col items-center text-xs cursor-pointer flex-shrink-0 hover:translate-y-[-10px] transition-all duration-500'>
         <img src={item.image} alt="" className='w-16 sm:w-24 mb-2'/>
-        <p>{item.speciality}</p>
+        <p>{item.name}</p>
     </Link>
 ))}
 </div>
