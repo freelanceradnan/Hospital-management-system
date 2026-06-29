@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { auth, db } from "../../Firebase/Firebase";
-import { createUserWithEmailAndPassword, signInWithPopup, signInWithRedirect } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  signInWithRedirect,
+} from "firebase/auth";
 import { toast } from "react-toastify";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { signInWithEmailAndPassword } from "firebase/auth/cordova";
@@ -18,17 +22,33 @@ const AuthForm = () => {
     email: "",
     password: "",
   });
-  const navigate=useNavigate()
-  const [loginLoading,setLoginLoading]=useState(false)
+  const navigate = useNavigate();
+  const [loginLoading, setLoginLoading] = useState(false);
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
-//show password 
-const [showPassword, setShowPassword] = useState(false);
-//login
+  //show password
+  const [showPassword, setShowPassword] = useState(false);
+  const [remembered, setRemembered] = useState(false);
+  //remembered email
+  useEffect(() => {
+  const savedRemember = localStorage.getItem("rememberEmail");
+  if (savedRemember) {
+    setFormData((prev) => ({ ...prev, email: savedRemember }));
+    setRemembered(true); 
+  }
+}, []);
+useEffect(() => {
+  if (remembered && formData.email) {
+    localStorage.setItem("rememberEmail", formData.email);
+  } else if (!remembered) {
+    localStorage.removeItem("rememberEmail");
+  }
+}, [remembered, formData.email]); 
+  //login
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -43,7 +63,7 @@ const [showPassword, setShowPassword] = useState(false);
           email: formData.email,
           role: "user",
           isActive: true,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         });
       }
       toast.success("Account create success!");
@@ -81,203 +101,219 @@ const [showPassword, setShowPassword] = useState(false);
     }
   };
 
-//login section added
-const loginHandler=async(e)=>{
-  e.preventDefault();
-  setLoginLoading(true)
-  try {
-    await signInWithEmailAndPassword(auth,formData.email,formData.password)
-    toast.success('account login success!')
-  } catch (error) {
-    toast.error('login failure')
-  }
-  finally{
-    setLoginLoading(false)
-    setFormData({
-      email:"",
-      password:""
-    })
-  }
-}
-//google signup
-const provider=new GoogleAuthProvider()
-const signWithGoogle=async()=>{
-try {
-  const result=await signInWithPopup(auth,provider)
-  const user=result.user
-  if(user){
-    const userRef = doc(db, 'users', user.uid);
-     const userSnap = await getDoc(userRef);
-     if(!userSnap.exists()){
-       await setDoc(userRef, {
+  //login section added
+  const loginHandler = async (e) => {
+    e.preventDefault();
+    setLoginLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      toast.success("account login success!");
+    } catch (error) {
+      toast.error("login failure");
+    } finally {
+      setLoginLoading(false);
+      setFormData({
+        email: "",
+        password: "",
+      });
+    }
+  };
+  //google signup
+  const provider = new GoogleAuthProvider();
+  const signWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        if (!userSnap.exists()) {
+          await setDoc(userRef, {
             email: user.email,
             role: "user",
             isActive: true,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
           });
-     }
-     toast.success(state=='login'?`login success!`:`signup success!`)
-  }
-  
-} catch (error) {
-  toast.error(error.message)
-}
-}
+        }
+        toast.success(state == "login" ? `login success!` : `signup success!`);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   return (
     <div className="lg:grid lg:grid-cols-2 rounded-xl shadow-xl mt-10 lg:max-w-4xl mx-auto max-w-sm">
-     <div className=" rounded-sm max-h-5xl hidden lg:block bg-blue-50">
-    <div className="w-full flex justify-center items-center h-full">
-      <img src={state=='login'?assets.doc9:assets.loginpng} alt="" className="w-[300px]"/>
-    </div>
-     </div>
-     <div className="mx-auto flex justify-center w-full">
- <form
-        onSubmit={state==='login'?loginHandler:handleSubmit}
-        className="flex flex-col gap-4 items-start p-8 w-full text-zinc-600 text-sm shadow-lg bg-[#FFFFFF]"
-      >
-        {/* Header Section */}
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight text-zinc-900">
-            {state === "signup" ? "Create Account" : "Login"}
-          </h2>
-          <p className="text-zinc-500 mt-2">
-            {state === "signup"
-              ? "Please sign up to book appointment"
-              : "Please login to book appointment"}
-          </p>
+      <div className=" rounded-sm max-h-5xl hidden lg:block bg-blue-50">
+        <div className="w-full flex justify-center items-center h-full">
+          <img
+            src={state == "login" ? assets.doc9 : assets.loginpng}
+            alt=""
+            className="w-[300px]"
+          />
         </div>
+      </div>
+      <div className="mx-auto flex justify-center w-full">
+        <form
+          onSubmit={state === "login" ? loginHandler : handleSubmit}
+          className="flex flex-col gap-4 items-start p-8 w-full text-zinc-600 text-sm shadow-lg bg-[#FFFFFF]"
+        >
+          {/* Header Section */}
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight text-zinc-900">
+              {state === "signup" ? "Create Account" : "Login"}
+            </h2>
+            <p className="text-zinc-500 mt-2">
+              {state === "signup"
+                ? "Please sign up to book appointment"
+                : "Please login to book appointment"}
+            </p>
+          </div>
 
-        {/* Full Name Field (Hidden on Login) */}
-        {state === "signup" && (
+          {/* Full Name Field (Hidden on Login) */}
+          {state === "signup" && (
+            <div className="w-full">
+              <label
+                htmlFor="fullName"
+                className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider"
+              >
+                Full Name
+              </label>
+              <input
+                type="text"
+                name="fullName"
+                id="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                placeholder="John Doe"
+                className="border border-zinc-300 rounded w-full p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+          )}
+
+          {/* Email Field */}
           <div className="w-full">
             <label
-              htmlFor="fullName"
+              htmlFor="email"
               className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider"
             >
-              Full Name
+              Email Address
             </label>
             <input
-              type="text"
-              name="fullName"
-              id="fullName"
-              value={formData.fullName}
+              type="email"
+              name="email"
+              id="email"
+              value={formData.email}
               onChange={handleChange}
-              placeholder="John Doe"
+              placeholder="you@example.com"
               className="border border-zinc-300 rounded w-full p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
-        )}
 
-        {/* Email Field */}
-        <div className="w-full">
-          <label htmlFor="email" className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider">
-            Email Address
-          </label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="you@example.com"
-            className="border border-zinc-300 rounded w-full p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            required
-          />
-        </div>
+          {/* Password Field */}
+          <div className="w-full">
+            <label
+              htmlFor="password"
+              className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider"
+            >
+              Password
+            </label>
+            <div className="relative w-full">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                id="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                className="border border-zinc-300 rounded w-full p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-0 h-full flex items-center text-zinc-400 hover:text-zinc-600"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+          </div>
+          {state === "login" && (
+            <div className="flex gap-2">
+              <input
+                className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                type="checkbox"
+                id="checkbox"
+                checked={remembered}
+                onChange={(e) => setRemembered(e.target.checked)}
+              />
 
-        {/* Password Field */}
-        <div className="w-full">
-          <label
-            htmlFor="password"
-            className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider"
+              <label htmlFor="login">Remember Login</label>
+            </div>
+          )}
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm hover:shadow transition duration-200 disabled:opacity-70"
           >
-            Password
-          </label>
-        <div className="relative w-full">
-  <input
-    type={showPassword ? "text" : "password"}
-    name="password"
-    id="password"
-    value={formData.password}
-    onChange={handleChange}
-    placeholder="••••••••"
-    className="border border-zinc-300 rounded w-full p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
-    required
-  />
-  <button
-  type="button"
-  onClick={() => setShowPassword(!showPassword)}
-  
-  className="absolute right-3 top-0 h-full flex items-center text-zinc-400 hover:text-zinc-600"
->
-  {showPassword ? (
-    <EyeOff className="h-5 w-5" />
-  ) : (
-    <Eye className="h-5 w-5" />
-  )}
-</button>
-</div>
-          
-        </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm hover:shadow transition duration-200 disabled:opacity-70"
-          >
-        
-          {loading ||loginLoading
-            ? "loading...."
-            : state === "signup"
-              ? "Create Account"
-              : "Login"}
-        </button>
-        <div className="flex items-center w-full">
-  <div className="flex-1 border-t border-zinc-200"></div>
-  <span className="mx-4 text-zinc-400 text-xs uppercase tracking-wider select-none">Or</span>
-  <div className="flex-1 border-t border-zinc-200"></div>
-</div>
-         <div className="flex justify-center w-full">
- <button 
- onClick={signWithGoogle}
-            type="button" 
-            className="flex justify-center items-center gap-2 border border-zinc-300 hover:bg-zinc-50 text-zinc-700 font-medium py-2.5 px-4 rounded-lg shadow-sm transition duration-200 w-full"
-          >
-            <img src={assets.google} className="w-5 h-5" alt="Google logo"/>
-            Continue with Google
+            {loading || loginLoading
+              ? "loading...."
+              : state === "signup"
+                ? "Create Account"
+                : "Login"}
           </button>
-        
-</div>
+          <div className="flex items-center w-full">
+            <div className="flex-1 border-t border-zinc-200"></div>
+            <span className="mx-4 text-zinc-400 text-xs uppercase tracking-wider select-none">
+              Or
+            </span>
+            <div className="flex-1 border-t border-zinc-200"></div>
+          </div>
+          <div className="flex justify-center w-full">
+            <button
+              onClick={signWithGoogle}
+              type="button"
+              className="flex justify-center items-center gap-2 border border-zinc-300 hover:bg-zinc-50 text-zinc-700 font-medium py-2.5 px-4 rounded-lg shadow-sm transition duration-200 w-full"
+            >
+              <img src={assets.google} className="w-5 h-5" alt="Google logo" />
+              Continue with Google
+            </button>
+          </div>
 
-        {/* State Toggle Link */}
-        <p className="text-zinc-500 mt-2 text-center w-full">
-          {state === "signup"
-            ? "Already have an account? "
-            : "Don't have an account? "}
-          <span
-            onClick={() => setState(state === "signup" ? "login" : "signup")}
-            className="text-blue-600 font-medium cursor-pointer hover:underline ml-1"
-          >
-            {state === "signup" ? "Login here" : "Sign up here"}
-          </span>
-        </p>
-     
-        {state !== "signup" && (
-          <>
-           <div className="border-t border-zinc-100 h-1 w-full"></div>
-           <div className="flex items-center justify-center w-full gap-2 text-sm text-blue-500 font-bold">
-            <Link to="/admin-login" state={{ role: "admin" }}>
-  <p>Admin Login</p>
-</Link> | 
-             <Link to="/admin-login" state={{ role: "doctor" }}>
-  <p>Doctor Login</p>
-</Link>
-           </div>
-          </>
-        )}
-      </form>
-     </div>
+          {/* State Toggle Link */}
+          <p className="text-zinc-500 mt-2 text-center w-full">
+            {state === "signup"
+              ? "Already have an account? "
+              : "Don't have an account? "}
+            <span
+              onClick={() => setState(state === "signup" ? "login" : "signup")}
+              className="text-blue-600 font-medium cursor-pointer hover:underline ml-1"
+            >
+              {state === "signup" ? "Login here" : "Sign up here"}
+            </span>
+          </p>
+
+          {state !== "signup" && (
+            <>
+              <div className="border-t border-zinc-100 h-1 w-full"></div>
+              <div className="flex items-center justify-center w-full gap-2 text-sm text-blue-500 font-bold">
+                <Link to="/admin-login" state={{ role: "admin" }}>
+                  <p>Admin Login</p>
+                </Link>{" "}
+                |
+                <Link to="/admin-login" state={{ role: "doctor" }}>
+                  <p>Doctor Login</p>
+                </Link>
+              </div>
+            </>
+          )}
+        </form>
+      </div>
     </div>
   );
 };
