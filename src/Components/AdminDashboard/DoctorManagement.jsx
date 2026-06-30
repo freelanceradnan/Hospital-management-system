@@ -81,56 +81,72 @@ const DoctorManagement = () => {
             </div>
 
             {/* Doctors List / Table Layout */}
-            <div className='bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden'>
-                {filteredData()?.length > 0 ? (
-                    <div className='flex flex-col divide-y divide-gray-100'>
-                        {/* Table Header Row */}
-                        <div className='flex justify-between items-center bg-gray-50 px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider'>
-                            <div className='w-2/5'>Doctor Name</div>
-                            <div className='w-2/5'>Category</div>
-                            <div className='w-1/5 text-right'>Actions</div>
-                        </div>
+            <div className='bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto w-full'>
+    {filteredData()?.length > 0 ? (
+        <div className='flex flex-col divide-y divide-gray-100 min-w-[750px]'>
+            
 
-                        {/* List Items */}
-                        {filteredData().map((doc) => {
-                            const activeCategory = AllCategories?.find(c => c.id == doc.categoryId);
-
-                            return (
-                                <div key={doc.id || doc._id} className='flex justify-between items-center px-6 py-4 hover:bg-gray-50 transition group'>
-                                    {/* Name */}
-                                    <div className='w-2/5 font-medium text-gray-900 group-hover:text-blue-600 transition'>
-                                        {doc.name}
-                                    </div>
-                                    
-                                    {/* Category Status */}
-                                    <div className='w-2/5'>
-                                        <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${activeCategory ? 'bg-blue-50 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
-                                            {activeCategory?.name || "No Category"}
-                                        </span>
-                                    </div>
-                                    
-                                    {/* Action Buttons */}
-                                    <div className='w-1/5 flex items-center justify-end gap-4 text-sm font-medium'>
-                                        <button className="text-blue-600 hover:text-blue-800 transition">
-                                            Edit
-                                        </button>
-                                        <button className="text-red-500 hover:text-red-700 transition">
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                ) : (
-                    /* Empty State UI */
-                    <div className='flex flex-col items-center justify-center p-12 text-center'>
-                        <div className='text-4xl text-gray-300 mb-2'>🔍</div>
-                        <h3 className='text-gray-700 font-semibold text-lg'>No Doctors Found</h3>
-                        <p className='text-gray-500 text-sm max-w-sm mt-1'>We couldn't find any search result matching "{searchData}". Try checking your spelling.</p>
-                    </div>
-                )}
+            <div className='flex justify-between items-center bg-gray-50 px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider'>
+                <div className='w-1/4'>Doctor Name</div>
+                <div className='w-1/4'>Category</div>
+                <div className='w-1/4'>Status</div>
+                <div className='w-1/4 text-right'>Actions</div>
             </div>
+
+            {/* List Items */}
+            {filteredData().map((doc) => {
+                console.log(doc)
+                const activeCategory = AllCategories?.find(c => c.id == doc.categoryId);
+                const isActive = doc.isActive === true ? "Available" : "Unavailable";
+                
+                return (
+                    <div key={doc.id || doc._id} className='flex justify-between items-center px-6 py-4 hover:bg-gray-50 transition group'>
+                        
+                        {/* Name (w-1/4) */}
+                        <div className='w-1/4 font-medium text-gray-900 group-hover:text-blue-600 transition truncate pr-2'>
+                            {doc.name}
+                        </div>
+                        
+                        
+                        <div className='w-1/4'>
+                            <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${activeCategory ? 'bg-blue-50 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+                                {activeCategory?.name || "No Category"}
+                            </span>
+                        </div>
+                        
+                       
+                        <div className='w-1/4'>
+                            <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${ 
+                                isActive === 'Available' 
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                                : 'bg-rose-50 text-rose-600 border border-rose-100'
+                            }`}>
+                                {isActive}
+                            </span>
+                        </div>
+                        
+                        
+                        <div className='w-1/4 flex items-center justify-end gap-4 text-sm font-medium'>
+                            <button className="text-blue-600 hover:text-blue-800 transition" onClick={()=>navigate(`/admin-dashboard/DoctorManagement/${doc.id}`)}>
+                                Edit
+                            </button>
+                            <button className="text-red-500 hover:text-red-700 transition">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    ) : (
+        /* Empty State UI */
+        <div className='flex flex-col items-center justify-center p-12 text-center w-full'>
+            <div className='text-4xl text-gray-300 mb-2'>🔍</div>
+            <h3 className='text-gray-700 font-semibold text-lg'>No Doctors Found</h3>
+            <p className='text-gray-500 text-sm max-w-sm mt-1'>We couldn't find any search result matching "{searchData}". Try checking your spelling.</p>
+        </div>
+    )}
+</div>
         </div>
     );
 };
