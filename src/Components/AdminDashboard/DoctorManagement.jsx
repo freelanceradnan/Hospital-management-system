@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGetAllCategoriesQuery, useGetAllDoctorsQuery } from '../../Feature/ApiSlice';
+import {  useDeleteDoctorMutation, useGetAllCategoriesQuery, useGetAllDoctorsQuery } from '../../Feature/ApiSlice';
+import { toast } from 'react-toastify';
 
 const DoctorManagement = () => {
     const navigate = useNavigate();
+    const [deleteDoc]=useDeleteDoctorMutation()
     const { data: AllDoctors } = useGetAllDoctorsQuery();
     const { data: AllCategories } = useGetAllCategoriesQuery();
     const [searchData, setSearchData] = useState("");
@@ -21,7 +23,18 @@ const DoctorManagement = () => {
             return AllDoctors.filter(c => c.name.toLowerCase().includes(searchData.toLowerCase()));
         }
     };
-
+const deleteHandler = async (id) => {
+  try {
+    if (!id) {
+      return toast.error("Failed to get ID! Please refresh or try again.");
+    }
+    await deleteDoc(id).unwrap(); 
+    
+    toast.success('Doctor deleted successfully!');
+  } catch (error) {
+    toast.error(error?.data?.message || "Doctor deletion failed");
+  }
+};
     return (
         <div className=' bg-gray-50 min-h-screen flex flex-col gap-2 text-gray-800 font-sans'>
             
@@ -95,7 +108,7 @@ const DoctorManagement = () => {
 
             {/* List Items */}
             {filteredData().map((doc) => {
-                console.log(doc)
+              
                 const activeCategory = AllCategories?.find(c => c.id == doc.categoryId);
                 const isActive = doc.isActive === true ? "Available" : "Unavailable";
                 
@@ -130,7 +143,7 @@ const DoctorManagement = () => {
                             <button className="text-blue-600 hover:text-blue-800 transition" onClick={()=>navigate(`/admin-dashboard/DoctorManagement/${doc.id}`)}>
                                 Edit
                             </button>
-                            <button className="text-red-500 hover:text-red-700 transition">
+                            <button className="text-red-500 hover:text-red-700 transition" onClick={()=>deleteHandler(doc.id)}>
                                 Delete
                             </button>
                         </div>
